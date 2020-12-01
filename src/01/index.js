@@ -9,31 +9,31 @@ const convertValuesToNumbers = values =>
 const solve = numbers => {
   let result;
 
-  found = numbers.some((firstNumber, i) => {
-    return numbers.slice(i + 1).some(secondNumber => {
+  numbers.some((firstNumber, i) =>
+    numbers.slice(i + 1).some(secondNumber => {
       if (firstNumber + secondNumber === 2020) {
         result = firstNumber * secondNumber;
         return true;
       }
 
       return false;
-    });
-  });
+    })
+  );
 
   console.log("> result 1:", result);
 
-  found = numbers.some((firstNumber, i) => {
-    return numbers.slice(i + 1).some((secondNumber, j) => {
-      return numbers.slice(j + 1).some(thirdNumber => {
+  numbers.some((firstNumber, i) =>
+    numbers.slice(i + 1).some((secondNumber, j) =>
+      numbers.slice(j + 1).some(thirdNumber => {
         if (firstNumber + secondNumber + thirdNumber === 2020) {
           result = firstNumber * secondNumber * thirdNumber;
           return true;
         }
 
         return false;
-      });
-    });
-  });
+      })
+    )
+  );
 
   console.log("> result 2:", result);
 };
