@@ -17,4 +17,3 @@ export const readFile = (relativePath) =>
       resolve(data)
     })
   })
-

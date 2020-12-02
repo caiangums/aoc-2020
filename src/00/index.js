@@ -20,4 +20,3 @@ export default () => {
       console.error('Error:', err)
     })
 }
-
