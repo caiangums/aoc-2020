@@ -1,6 +1,4 @@
-import { readFile } from '_utils/file'
-
-const getLines = (data) => data.split('\n')
+import { readFile, getLinesFromFile } from '_utils/file'
 
 const getLetterCountFromPassword = (password, letter) =>
   (password.match(new RegExp(letter, 'g')) || []).length
@@ -72,7 +70,7 @@ export default () => {
 
   return readFile('02/input.in')
     .then((data) => {
-      const lines = getLines(data)
+      const lines = getLinesFromFile(data)
       solve(lines)
     })
     .catch((err) => {

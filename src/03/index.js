@@ -1,6 +1,4 @@
-import { readFile } from '_utils/file'
-
-const getLines = (data) => data.split('\n')
+import { readFile, getLinesFromFile } from '_utils/file'
 
 const getNextPosition = ({ actual, mod, steps = 3 }) => (actual + steps) % mod
 
@@ -74,7 +72,7 @@ export default () => {
 
   return readFile('03/input.in')
     .then((data) => {
-      const lines = getLines(data)
+      const lines = getLinesFromFile(data)
       solve(lines)
     })
     .catch((err) => {
