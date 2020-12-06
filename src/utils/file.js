@@ -17,3 +17,5 @@ export const readFile = (relativePath) =>
       resolve(data)
     })
   })
+
+export const getLinesFromFile = (data) => data.split('\n')
