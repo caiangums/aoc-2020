@@ -1,9 +1,9 @@
 {
-  "name": "aoc-template",
+  "name": "aoc-2020",
   "version": "1.0.0",
-  "description": "🎄Advent of Code Template",
+  "description": "🎄Advent of Code 2020",
   "main": "index.js",
-  "repository": "https://github.com/caiangums/aoc-template.git",
+  "repository": "https://github.com/caiangums/aoc-2020.git",
   "author": "Ilê Caian <ile.caian@gmail.com>",
   "license": "MIT",
   "private": false,

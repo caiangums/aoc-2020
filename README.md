@@ -1,6 +1,6 @@
-# 🎄Advent of Code - Template
+# 🎄Advent of Code - 2020
 
-> Opinionated template for solving Advent of Code with JS
+> Advent of Code 2020 Solutions with JS
 
 ## Usage
 
@@ -8,7 +8,7 @@ Dependencies:
 - NodeJS
 - Yarn (or npm)
 
-After creating your repo based on this template you can customize this Readme and the `package.json`. After that you should install all the dependencies
+Install all the dependencies
 
 ```sh
 $ yarn
