@@ -168,5 +168,3 @@ export default () => {
       console.error('Error:', err)
     })
 }
-
-// 2768 - too high
