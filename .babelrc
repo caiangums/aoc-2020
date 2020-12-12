@@ -7,6 +7,7 @@
       "module-resolver",
       {
         "alias": {
+          "_algorithms": "./src/algorithms",
           "_utils": "./src/utils",
           "_data-structures": "./src/data-structures",
           "_constants": "./src/constants",
