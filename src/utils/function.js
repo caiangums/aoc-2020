@@ -4,6 +4,9 @@ export const stringToArray = (splitVal = '\n') => (data) => data.split(splitVal)
 
 export const stringToNumber = (data) => Number(data)
 
+export const filterNonNumbers = (arr) =>
+  arr.filter((val) => !Number.isNaN(+val))
+
 export const toNumberArray = (data) => data.map(stringToNumber)
 
 export const arrayToString = (arr) =>
