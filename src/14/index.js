@@ -66,7 +66,9 @@ const fillPositionsArray = ({ xCount, nonModified }) => {
   const positions = []
   let count = 0
 
-  while (count < xCount * xCount) {
+  const maxVal = Math.pow(2, xCount)
+
+  while (count < maxVal) {
     const bitCount = [...convertToBinary(count).slice(-xCount)]
 
     const positionCount = nonModified.reduce(
