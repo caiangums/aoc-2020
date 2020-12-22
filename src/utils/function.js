@@ -15,3 +15,8 @@ export const arrayToString = (arr) =>
 export const sum = (...args) => args.reduce((s, a) => s + a, 0)
 
 export const multiply = (...args) => args.reduce((m, a) => m * a, 1)
+
+export const pipeLog = (...logArgs) => (arg) => {
+  console.log(...logArgs, arg)
+  return arg
+}
