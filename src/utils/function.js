@@ -13,3 +13,5 @@ export const arrayToString = (arr) =>
   arr.reduce((s, el) => (s.length === 0 ? `${el}` : `${s},${el}`), '')
 
 export const sum = (...args) => args.reduce((s, a) => s + a, 0)
+
+export const multiply = (...args) => args.reduce((m, a) => m * a, 1)
