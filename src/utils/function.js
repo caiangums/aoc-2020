@@ -20,3 +20,10 @@ export const pipeLog = (...logArgs) => (arg) => {
   console.log(...logArgs, arg)
   return arg
 }
+
+export const reverseArr = (arr) => arr.reverse()
+
+export const joinArrayToString = (arr) => arr.join('')
+
+export const reverseStr = (str) =>
+  pipe(stringToArray(''), reverseArr, joinArrayToString)(str)

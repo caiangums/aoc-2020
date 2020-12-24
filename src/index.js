@@ -18,6 +18,7 @@ import solve16 from './16'
 import solve17 from './17'
 import solve18 from './18'
 import solve19 from './19'
+import solve20 from './20'
 
 const solveAll = async () => {
   await solve00()
@@ -40,6 +41,7 @@ const solveAll = async () => {
   await solve17()
   await solve18()
   await solve19()
+  await solve20()
 }
 
 export default solveAll
