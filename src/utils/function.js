@@ -27,3 +27,5 @@ export const joinArrayToString = (arr) => arr.join('')
 
 export const reverseStr = (str) =>
   pipe(stringToArray(''), reverseArr, joinArrayToString)(str)
+
+export const sliceArray = (...args) => (arr) => arr.slice(...args)
