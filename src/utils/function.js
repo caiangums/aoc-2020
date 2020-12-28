@@ -12,7 +12,15 @@ export const toNumberArray = (data) => data.map(stringToNumber)
 export const arrayToString = (arr) =>
   arr.reduce((s, el) => (s.length === 0 ? `${el}` : `${s},${el}`), '')
 
+export const arrayToStringWithSeparator = (separator = '') => (arr) =>
+  arr.reduce(
+    (s, el) => (s.length === 0 ? `${el}` : `${s}${separator}${el}`),
+    ''
+  )
+
 export const sum = (...args) => args.reduce((s, a) => s + a, 0)
+
+export const sumArray = (args) => sum(...args)
 
 export const multiply = (...args) => args.reduce((m, a) => m * a, 1)
 
