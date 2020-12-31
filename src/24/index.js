@@ -1,5 +1,10 @@
 import { readFile } from '_utils/file'
-import { pipe, stringToArray, arrayToString } from '_utils/function'
+import {
+  pipe,
+  stringToArray,
+  arrayToString,
+  toNumberArray,
+} from '_utils/function'
 
 /**
  * Hexagonal Initial
@@ -23,6 +28,8 @@ const INITIAL_TILE = [0, 0]
 
 const DOUBLE_LETTER_TILE = ['s', 'n']
 
+const PASSING_DAYS = 1
+
 const STEP_TILE = {
   nw: [2, 2],
   w: [4, 0],
@@ -31,6 +38,8 @@ const STEP_TILE = {
   e: [-4, 0],
   ne: [-2, 2],
 }
+
+const ADJACENT_TILES = Object.values(STEP_TILE)
 
 const getStepTile = (label) => STEP_TILE[label]
 
@@ -77,26 +86,111 @@ const getFlippedSum = (ground) => {
   return sum
 }
 
-const solve = async (lines) => {
-  let result
-
-  const tilesFlip = lines.map((line) => parseLineToTile(line))
-
+const fillGround = (tilesFlip) => {
   const ground = new Map()
+
   tilesFlip.forEach((tile) => {
     const tileKey = arrayToString(tile)
     ground.set(tileKey, getTileState(ground, tileKey))
   })
 
+  return ground
+}
+
+const getAdjacentTilesFrom = (tile) =>
+  ADJACENT_TILES.map(([x, y]) => arrayToString([tile[0] + x, tile[1] + y]))
+
+const getTileNextDayState = ({ tileState, adjacentTiles, ground }) => {
+  const flippedCount = adjacentTiles.reduce(
+    (flipped, tile) => (ground.get(tile) ? flipped + 1 : flipped),
+    0
+  )
+
+  // console.log(flippedCount)
+  // true = flipped
+  return tileState ? flippedCount === 0 || flippedCount > 2 : flippedCount === 2
+}
+
+const passDays = (ground, days = PASSING_DAYS) => {
+  let countDays = 0
+  let updatedGround = new Map(ground)
+
+  while (countDays < days) {
+    const actualUpdatedGround = new Map(updatedGround)
+    console.log(`day ${countDays + 1} = ${getFlippedSum(actualUpdatedGround)}`)
+
+    const keysIt = actualUpdatedGround.keys()
+
+    let actualIt = keysIt.next()
+    const tilesArr = []
+
+    while (!actualIt.done) {
+      tilesArr.push(actualIt.value)
+      actualIt = keysIt.next()
+    }
+
+    tilesArr.forEach((actualTile) => {
+      const tileState = updatedGround.get(actualTile)
+      const adjacentTiles = pipe(
+        stringToArray(','),
+        toNumberArray,
+        getAdjacentTilesFrom
+      )(actualTile)
+
+      const adjacentTilesMap = new Map()
+      adjacentTiles.forEach((adjacentTile) => {
+        if (!actualUpdatedGround.has(adjacentTile)) {
+          actualUpdatedGround.set(adjacentTile, false)
+        }
+
+        let tileState = false
+        if (updatedGround.has(adjacentTile)) {
+          tileState = updatedGround.get(adjacentTile)
+        }
+
+        adjacentTilesMap.set(adjacentTile, tileState)
+      })
+
+      const tileNextState = getTileNextDayState({
+        tileState,
+        adjacentTiles,
+        ground: adjacentTilesMap,
+      })
+
+      actualUpdatedGround.set(actualTile, tileNextState)
+    })
+
+    updatedGround = actualUpdatedGround
+
+    console.log(`day ${countDays + 1} = ${getFlippedSum(updatedGround)}`)
+    countDays += 1
+  }
+
+  return updatedGround
+}
+
+const solve = async (lines) => {
+  let result
+
+  const tilesFlip = lines.map((line) => parseLineToTile(line))
+
+  const ground = fillGround(tilesFlip)
+
   result = getFlippedSum(ground)
 
   console.log('> result 1:', result)
+
+  const updatedGround = passDays(ground)
+
+  result = getFlippedSum(updatedGround)
+
+  console.log('> result 2:', result)
 }
 
 export default () => {
   console.log('--- Day 24: Lobby Layout ---')
 
-  return readFile('24/input.in')
+  return readFile('24/test.in')
     .then((data) => {
       const lines = pipe(stringToArray())(data)
 
