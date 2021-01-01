@@ -11,7 +11,7 @@ import {
  *
  * Think at hexagons in the carthesian plan [x, y].
  * The INITIAL_TILE will be located at [0, 0] (represented by o)
- * and adjacent tiles has its centers 4 units away from each other:
+ * and adjacent tiles has its centers 2 units away from each other:
  *
  *   / \ / \ / \ / \
  *  |   | . | . |   |
@@ -31,12 +31,12 @@ const DOUBLE_LETTER_TILE = ['s', 'n']
 const PASSING_DAYS = 1
 
 const STEP_TILE = {
-  nw: [2, 2],
-  w: [4, 0],
-  sw: [2, -2],
-  se: [-2, -2],
-  e: [-4, 0],
-  ne: [-2, 2],
+  nw: [1, 1],
+  w: [2, 0],
+  sw: [1, -1],
+  se: [-1, -1],
+  e: [-2, 0],
+  ne: [-1, 1],
 }
 
 const ADJACENT_TILES = Object.values(STEP_TILE)
@@ -190,7 +190,7 @@ const solve = async (lines) => {
 export default () => {
   console.log('--- Day 24: Lobby Layout ---')
 
-  return readFile('24/test.in')
+  return readFile('24/input.in')
     .then((data) => {
       const lines = pipe(stringToArray())(data)
 
