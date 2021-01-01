@@ -28,7 +28,7 @@ const INITIAL_TILE = [0, 0]
 
 const DOUBLE_LETTER_TILE = ['s', 'n']
 
-const PASSING_DAYS = 1
+const PASSING_DAYS = 100
 
 const STEP_TILE = {
   nw: [1, 1],
@@ -67,106 +67,101 @@ const parseLineToTile = (line) => {
   return tile
 }
 
-const getTileState = (ground, tileKey) =>
-  ground.has(tileKey) ? !ground.get(tileKey) : true
-
-const getFlippedSum = (ground) => {
-  const valuesIt = ground.values()
-
-  let actualIt = valuesIt.next()
-
-  let sum = actualIt.value ? 1 : 0
-
-  while (!actualIt.done) {
-    actualIt = valuesIt.next()
-
-    sum = actualIt.value ? sum + 1 : sum
-  }
-
-  return sum
-}
-
-const fillGround = (tilesFlip) => {
-  const ground = new Map()
-
-  tilesFlip.forEach((tile) => {
+/**
+ * Just store flipped tiles
+ */
+const fillGround = (tilesFlip) =>
+  tilesFlip.reduce((ground, tile) => {
     const tileKey = arrayToString(tile)
-    ground.set(tileKey, getTileState(ground, tileKey))
-  })
 
-  return ground
-}
+    if (ground.has(tileKey)) {
+      ground.delete(tileKey)
+    } else {
+      ground.add(tileKey)
+    }
+
+    return ground
+  }, new Set())
 
 const getAdjacentTilesFrom = (tile) =>
   ADJACENT_TILES.map(([x, y]) => arrayToString([tile[0] + x, tile[1] + y]))
 
-const getTileNextDayState = ({ tileState, adjacentTiles, ground }) => {
-  const flippedCount = adjacentTiles.reduce(
-    (flipped, tile) => (ground.get(tile) ? flipped + 1 : flipped),
-    0
-  )
+const getAdjacentTiles = (tile) =>
+  pipe(stringToArray(','), toNumberArray, getAdjacentTilesFrom)(tile)
 
-  // console.log(flippedCount)
-  // true = flipped
-  return tileState ? flippedCount === 0 || flippedCount > 2 : flippedCount === 2
-}
+const getTileNextDayState = ({ tileState, flippedCount }) =>
+  tileState ? flippedCount === 0 || flippedCount > 2 : flippedCount === 2
 
-const passDays = (ground, days = PASSING_DAYS) => {
-  let countDays = 0
-  let updatedGround = new Map(ground)
+const passDay = (ground) => {
+  const nonFlippedTilesCheck = new Set()
+  const updatedGround = new Set(ground)
 
-  while (countDays < days) {
-    const actualUpdatedGround = new Map(updatedGround)
-    console.log(`day ${countDays + 1} = ${getFlippedSum(actualUpdatedGround)}`)
+  // check flipped tiles
+  const keysIt = ground.keys()
+  let actualIt = keysIt.next()
 
-    const keysIt = actualUpdatedGround.keys()
+  while (!actualIt.done) {
+    const adjacentTiles = getAdjacentTiles(actualIt.value)
 
-    let actualIt = keysIt.next()
-    const tilesArr = []
+    const flippedCount = adjacentTiles.reduce((flipCount, adjacentTile) => {
+      if (ground.has(adjacentTile)) {
+        return flipCount + 1
+      }
 
-    while (!actualIt.done) {
-      tilesArr.push(actualIt.value)
-      actualIt = keysIt.next()
-    }
+      nonFlippedTilesCheck.add(adjacentTile)
+      return flipCount
+    }, 0)
 
-    tilesArr.forEach((actualTile) => {
-      const tileState = updatedGround.get(actualTile)
-      const adjacentTiles = pipe(
-        stringToArray(','),
-        toNumberArray,
-        getAdjacentTilesFrom
-      )(actualTile)
-
-      const adjacentTilesMap = new Map()
-      adjacentTiles.forEach((adjacentTile) => {
-        if (!actualUpdatedGround.has(adjacentTile)) {
-          actualUpdatedGround.set(adjacentTile, false)
-        }
-
-        let tileState = false
-        if (updatedGround.has(adjacentTile)) {
-          tileState = updatedGround.get(adjacentTile)
-        }
-
-        adjacentTilesMap.set(adjacentTile, tileState)
-      })
-
-      const tileNextState = getTileNextDayState({
-        tileState,
-        adjacentTiles,
-        ground: adjacentTilesMap,
-      })
-
-      actualUpdatedGround.set(actualTile, tileNextState)
+    const nextTileState = getTileNextDayState({
+      tileState: true,
+      flippedCount,
     })
 
-    updatedGround = actualUpdatedGround
+    if (nextTileState) {
+      updatedGround.delete(actualIt.value)
+    }
 
-    console.log(`day ${countDays + 1} = ${getFlippedSum(updatedGround)}`)
-    countDays += 1
+    actualIt = keysIt.next()
+  }
+
+  // check non-flipped tiles that could be flipped
+  const nonFlippedKeysIt = nonFlippedTilesCheck.keys()
+  let actualNonFlippedIt = nonFlippedKeysIt.next()
+
+  while (!actualNonFlippedIt.done) {
+    const adjacentTiles = getAdjacentTiles(actualNonFlippedIt.value)
+
+    const flippedCount = adjacentTiles.reduce(
+      (count, adjacentTile) => (ground.has(adjacentTile) ? count + 1 : count),
+      0
+    )
+
+    const nextTileState = getTileNextDayState({
+      tileState: false,
+      flippedCount,
+    })
+
+    if (nextTileState) {
+      updatedGround.add(actualNonFlippedIt.value)
+    }
+
+    actualNonFlippedIt = nonFlippedKeysIt.next()
   }
 
   return updatedGround
+}
+
+const getPassingDaysGround = (ground) => {
+  let dayPassedGround = ground
+
+  let count = 0
+  while (count < PASSING_DAYS) {
+    dayPassedGround = passDay(dayPassedGround)
+
+    count += 1
+  }
+
+  return dayPassedGround
 }
 
 const solve = async (lines) => {
@@ -176,13 +171,13 @@ const solve = async (lines) => {
 
   const ground = fillGround(tilesFlip)
 
-  result = getFlippedSum(ground)
+  result = ground.size
 
   console.log('> result 1:', result)
 
-  const updatedGround = passDays(ground)
+  const allDaysPassedGround = getPassingDaysGround(ground)
 
-  result = getFlippedSum(updatedGround)
+  result = allDaysPassedGround.size
 
   console.log('> result 2:', result)
 }
