@@ -107,6 +107,8 @@ const solve = async (tiles) => {
   result = cornerTilesArr.reduce((mult, tile) => mult * +tile.name, 1)
 
   console.log('> result 1:', result)
+
+  console.log('> result 2: TODO')
 }
 
 export default () => {

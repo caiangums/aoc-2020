@@ -23,6 +23,7 @@ import solve21 from './21'
 import solve22 from './22'
 import solve23 from './23'
 import solve24 from './24'
+import solve25 from './25'
 
 const solveAll = async () => {
   await solve00()
@@ -50,6 +51,7 @@ const solveAll = async () => {
   await solve22()
   await solve23()
   await solve24()
+  await solve25()
 }
 
 export default solveAll
